@@ -16,7 +16,6 @@ import type {
 } from "../../types/flaire-vault";
 
 const DEFAULT_TRIGGERS = ["Stress", "Cold Weather", "Poor Sleep", "Diet"];
-
 const BODY_REGIONS = ["Head", "Neck", "Back", "Chest", "Arms", "Legs"];
 
 export default function SymptomsPage() {
@@ -34,8 +33,8 @@ export default function SymptomsPage() {
 
     async function init() {
       const data = await loadFromStorage<FlaireVault>();
-      if (!data || cancelled) return;
-      setVault(data);
+      if (cancelled) return;
+      setVault(data ?? null);
     }
 
     init();
@@ -43,6 +42,14 @@ export default function SymptomsPage() {
       cancelled = true;
     };
   }, []);
+
+  const recentSymptoms = useMemo(() => {
+    return [...(vault?.symptoms ?? [])].sort(
+      (a, b) =>
+        new Date(b.occurredAt).getTime() -
+        new Date(a.occurredAt).getTime()
+    );
+  }, [vault]);
 
   if (!vault) {
     return <div className="p-8">Loading...</div>;
@@ -129,14 +136,6 @@ export default function SymptomsPage() {
     await saveToStorage(updatedVault);
   };
 
-  const recentSymptoms = useMemo(() => {
-    return [...vault.symptoms].sort(
-      (a, b) =>
-        new Date(b.occurredAt).getTime() -
-        new Date(a.occurredAt).getTime()
-    );
-  }, [vault]);
-
   return (
     <AppShell>
       <PageContainer title="Symptoms" subtitle="Track your symptoms">
@@ -171,6 +170,7 @@ export default function SymptomsPage() {
               {BODY_REGIONS.map((region) => (
                 <button
                   key={region}
+                  type="button"
                   onClick={() => toggleRegion(region)}
                   className="m-1 border px-2 py-1"
                 >
