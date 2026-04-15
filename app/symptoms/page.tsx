@@ -38,8 +38,17 @@ export default function SymptomsPage() {
     }
 
     init();
+
+    async function onVaultUpdated() {
+      const latest = await loadFromStorage<FlaireVault>();
+      if (cancelled) return;
+      setVault(latest ?? null);
+    }
+
+    window.addEventListener("flaire:vault-updated", onVaultUpdated);
     return () => {
       cancelled = true;
+      window.removeEventListener("flaire:vault-updated", onVaultUpdated);
     };
   }, []);
 

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import AppShell from "../components/layout/app-shell";
+import Chat from "../components/Chat";
 import { createEmptyVault } from "../lib/vault";
 import { loadFromStorage, saveToStorage } from "../lib/storage";
 import type { FlaireVault } from "../types/flaire-vault";
@@ -207,6 +208,8 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        <Chat />
 
         <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="rounded-[30px] border-2 border-[#7c9dc9] bg-white px-8 py-8">

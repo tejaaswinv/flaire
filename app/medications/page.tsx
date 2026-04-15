@@ -45,6 +45,22 @@ export default function MedicationsPage() {
   };
 }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function onVaultUpdated() {
+      const latest = await loadFromStorage<FlaireVault>();
+      if (!latest || cancelled) return;
+      setVault(latest);
+    }
+
+    window.addEventListener("flaire:vault-updated", onVaultUpdated);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("flaire:vault-updated", onVaultUpdated);
+    };
+  }, []);
+
   const todaysDate = new Date().toISOString().slice(0, 10);
 
   const medicationsWithProgress = useMemo(() => {

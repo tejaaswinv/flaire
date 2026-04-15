@@ -37,8 +37,17 @@ export default function DietPage() {
 
     init();
 
+    async function onVaultUpdated() {
+      const latest = await loadFromStorage<FlaireVault>();
+      if (!latest || cancelled) return;
+      setVault(latest);
+    }
+
+    window.addEventListener("flaire:vault-updated", onVaultUpdated);
+
     return () => {
       cancelled = true;
+      window.removeEventListener("flaire:vault-updated", onVaultUpdated);
     };
   }, []);
 

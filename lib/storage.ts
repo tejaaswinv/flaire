@@ -14,6 +14,7 @@ export async function saveToStorage(value: FlaireVault) {
 
   if (typeof window !== "undefined") {
     localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(value));
+    window.dispatchEvent(new Event("flaire:vault-updated"));
   }
 }
 

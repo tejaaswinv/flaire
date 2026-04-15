@@ -70,8 +70,25 @@ const [stress, setStress] = useState<Severity>(5 as Severity);
 
     init();
 
+    async function onVaultUpdated() {
+      const latest = await loadFromStorage<FlaireVault>();
+      if (!latest || cancelled) return;
+      setVault(latest);
+
+      const todayKey = getTodayKey();
+      const existingToday = latest.checkins.find(
+        (checkin) => checkin.date.slice(0, 10) === todayKey
+      );
+      if (existingToday && !cancelled) {
+        fillForm(existingToday);
+      }
+    }
+
+    window.addEventListener("flaire:vault-updated", onVaultUpdated);
+
     return () => {
       cancelled = true;
+      window.removeEventListener("flaire:vault-updated", onVaultUpdated);
     };
   }, []);
 
